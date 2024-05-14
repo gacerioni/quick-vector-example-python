@@ -17,8 +17,8 @@ JSON_DATA_FOR_DEMO = [
 ]
 
 # Connect to Redis using the ReJSON wrapper
-rj = Client(host='redis-11424.c31136.sa-east-1-mz.ec2.cloud.rlrcp.com', port=11424,
-            password='Z67DWPanXrwRfjsnBY4vo48KVPiGt778', decode_responses=True)
+rj = Client(host='redis-11424<...>', port=11424,
+            password='nada', decode_responses=True)
 print("Connected to Redis:", rj.ping())
 
 
