@@ -10,7 +10,7 @@ import json
 
 # Configuration
 #REDIS_URL = "redis://default:blablabla@redis-<...>.rlrcp.com:<...>"
-INDEX_NAME = "gabsIdxTest"
+INDEX_NAME = "magaluIdxTest"
 VECTOR_DIMENSION = 384
 VECTOR_DATA_TYPE = "FLOAT32"
 DISTANCE_METRIC = "COSINE"
@@ -53,7 +53,7 @@ def knn_search(query_vector):
     try:
         #vector_bytes = np.array(query_vector, dtype=np.float32).tobytes()
         vector_bytes = query_vector
-        q = Query("*=>[KNN 5 @titleVector $vec AS score]").sort_by("score", asc=True).dialect(2).paging(0, 10)
+        q = Query("*=>[KNN 5 @titleVector $vec AS score]").sort_by("score", asc=True).dialect(2).paging(0,30000000)
         results = conn.ft(INDEX_NAME).search(q, query_params={"vec": vector_bytes})
         print("KNN Search Results:")
         print_results(results)
@@ -68,9 +68,8 @@ def range_search(query_vector):
         vector_bytes = query_vector
         radius = 3  # Adjust radius based on your use case
         q = Query("@titleVector:[VECTOR_RANGE $radius $vec]=>{$YIELD_DISTANCE_AS: score}") \
-            .sort_by("score", asc=True) \
-            .paging(0, 5) \
-            .dialect(2)
+            .sort_by("score", asc=True).paging(0,5) \
+            .dialect(2).timeout(100000)
         results = conn.ft(INDEX_NAME).search(q, query_params={"radius": radius, "vec": vector_bytes})
         print("Range Search Results:")
         print_results(results)
@@ -127,3 +126,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
